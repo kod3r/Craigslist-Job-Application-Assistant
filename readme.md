@@ -3,7 +3,7 @@ features:
 - contacting job posts is ajax (no browser refresh required)
 - table is sortable 
 - can be used on android browser (somewhat buggy still)
-
+- uses multiple email addresses to send to craigslist because craigslist rate limits per email address. 
 
 TODO / Known Issues:
 
