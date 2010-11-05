@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>MIME::split_message()</title>
+<style>
+body, pre {	font-family: Verdana; font-size: 10pt }
+a {	color: blue; text-decoration: none }
+a:hover { text-decoration: underline }
+</style>
+</head>
+<body bgcolor="#f1f3f5" topmargin="10" leftmargin="14">
+
+<pre>
+<hr color="white">
+MIME :: <i>array</i> <b>split_message</b> ( <i>string</i> message )
+<hr>
+Return multidimensional ARRAY ('header' => <i>string</i> headers, 'content' => <i>string</i> body).
+
+Example:
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+// standard mail message RFC2822
+$m = 'From: me@addr.net'."\r\n".
+     'To: my@addr.com'."\r\n".
+     'Subject: test'."\r\n".
+     'Content-Transfer-Encoding: base64'."\r\n".
+     'Content-Type: text/plain; charset="ISO-8859-1"'."\r\n\r\n".
+     base64_encode('Text message.');
+
+$r = MIME::split_message($m);
+
+// print result
+print_r($r);
+</code></pre>
+</td></tr>
+</table>
+
+<hr color="white">
+
+See Also: <a href="split_mail.html">MIME::split_mail()</a>
+
+[ <a href="mail&#116;&#111;:contact&#064;xpertmailer.com?subject=Comment MIME split_message">Comments</a> ]
+
+Last update: Sunday, December 09, 2007
+
+<hr>
+</pre>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>SMTP::MXconnect()</title>
+<style>
+body, pre {
+	font-family: Verdana;
+	font-size: 10pt;
+}
+a {	color: blue; text-decoration: none }
+a:hover { text-decoration: underline }
+</style>
+</head>
+<body bgcolor="#f1f3f5" topmargin="10" leftmargin="14">
+
+<pre>
+<hr color="white">
+SMTP :: <i>mixed</i> <b>mxconnect</b> ( <i>string</i> hostname [, <i>integer</i> port [, <i>integer</i> timeout [, <i>string</i> name [, <i>resource</i> context ]]]] )
+<hr>
+Return RESOURCE connection if has been successfully connected, boolean FALSE if not.
+
+Connect to <i>string</i> hostname MX zone.
+
+Default values are:
+<i>integer</i> port: 25
+<i>integer</i> timeout: 30
+<i>string</i> name: localhost
+
+<i>string</i> name is used in EHLO/HELO SMTP conversation.
+
+Example:
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+// connect to 'hostname.tld' MX zone
+$c = SMTP::MXconnect('hostname.tld');
+
+// print result
+if ($c) echo 'Successfully connected !';
+else print_r($_RESULT); // &lt;- for debugging
+</code></pre>
+</td></tr>
+</table>
+
+<hr color="white">
+
+See Also: <a href="disconnect.html">SMTP::Disconnect()</a>, <a href="connect.html">SMTP::Connect()</a>, <a href="send.html">SMTP::Send()</a>
+
+[ <a href="mail&#116;&#111;:contact&#064;xpertmailer.com?subject=Comment SMTP MXonnect">Comments</a> ]
+
+Last update: Sunday, June 24, 2007
+
+<hr>
+</pre>
+
+</body>
+</html>

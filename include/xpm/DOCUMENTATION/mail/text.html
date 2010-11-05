@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>MAIL->Text()</title>
+<style>
+body, pre {
+	font-family: Verdana;
+	font-size: 10pt;
+}
+a {	color: blue; text-decoration: none }
+a:hover { text-decoration: underline }
+</style>
+</head>
+<body bgcolor="#f1f3f5" topmargin="10" leftmargin="14">
+
+<pre>
+<hr color="white">
+MAIL -> <i>boolean</i> <b>text</b> ( <i>string</i> content [, <i>string</i> charset [, <i>string</i> encoding ]] )
+<hr>
+Return TRUE if has been successfully set, FALSE if not.
+
+Default values are:
+<i>string</i> charset: us-ascii
+<i>string</i> encoding: quoted-printable
+
+<i>string</i> encoding possible values are: binary, 7bit, 8bit, quoted-printable or base64
+
+Example (verification):
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+$m = new MAIL;
+
+// set text/plain mail body message
+$m->Text('text/plain message');
+</code></pre>
+</td></tr>
+</table>
+
+Example (deprecated):
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+$m = new MAIL;
+
+$m->Text = array(
+'content'  => 'text/plain message', // required
+'charset'  => 'utf-8', // optional
+'encoding' => 'base64' // optional
+);
+</code></pre>
+</td></tr>
+</table>
+
+<hr color="white">
+
+See Also: <a href="html.html">MAIL->Html()</a>
+
+[ <a href="mail&#116;&#111;:contact&#064;xpertmailer.com?subject=Comment MAIL Text">Comments</a> ]
+
+Last update: Sunday, June 17, 2007
+
+<hr>
+</pre>
+
+</body>
+</html>

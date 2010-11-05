@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>MAIL->Context()</title>
+<style>
+body, pre {
+	font-family: Verdana;
+	font-size: 10pt;
+}
+a {	color: blue; text-decoration: none }
+a:hover { text-decoration: underline }
+</style>
+</head>
+<body bgcolor="#f1f3f5" topmargin="10" leftmargin="14">
+
+<pre>
+<hr color="white">
+MAIL -> <i>mixed</i> <b>context</b> ( <i>array</i> options )
+<hr>
+Return RESOURCE connection if has been successfully set, boolean FALSE if not.
+
+This function is an alias of <a href="http://www.php.net/stream_context_create" target="_new">stream_context_create()</a>.
+For more informations, read the <a href="http://www.php.net/wrappers" target="_new">List of Supported Protocols/Wrappers</a>.
+
+Example (verification):
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+$m = new MAIL;
+
+$o = array('socket' =>
+     array('bindto' => '192.168.0.100:0'));
+// set context connection
+$m->Context($o);
+
+// connect to 'mx.hostname.tld' using the '192.168.0.100' IP
+$c = $m->Connect('mx.hostname.tld');
+
+// send mail via '$c' resource connection
+$m->Send($c);
+
+// or send mail direct to client MX zone using the '192.168.0.100' IP
+$m->Send('client');
+</code></pre>
+</td></tr>
+</table>
+
+Example (deprecated):
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+$m = new MAIL;
+
+$o = array('socket' =>
+     array('bindto' => '192.168.0.100:0'));
+// set context connection
+$m->Context = stream_context_create($o);
+</code></pre>
+</td></tr>
+</table>
+
+<hr color="white">
+
+See Also: <a href="connect.html">MAIL->Connect()</a>, <a href="send.html">MAIL->Send()</a>
+
+[ <a href="mail&#116;&#111;:contact&#064;xpertmailer.com?subject=Comment MAIL Context">Comments</a> ]
+
+Last update: Monday, June 11, 2007
+
+<hr>
+</pre>
+
+</body>
+</html>

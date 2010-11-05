@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>XPM4 Introduction</title>
+<style type="text/css">
+body, pre {	font-family: Verdana; font-size: 10pt }
+a {	color: blue; text-decoration: none }
+a:hover { text-decoration: underline }
+</style>
+</head>
+<body bgcolor="#f1f3f5" topmargin="10" leftmargin="14">
+
+<pre>
+<hr color="#ffffff">
+<b>XPM4</b> ( XPertMailer Version 4 ) PHP Mail Class. Can send and read messages in MIME format.
+<hr>
+
+This is the DOCUMENTATION for XPertMailer Version 4.0.5.
+To stay update, check the online version of this documentation: <a href="http://www.xpertmailer.com/documentation/" target="_blank">http://www.xpertmailer.com/documentation/</a>
+
+For more php code examples, read the "EXAMPLES" folder from XPM4 download package, or/and the online web page <a href="http://www.xpertmailer.com/examples.php" target="_blank">http://www.xpertmailer.com/examples.php</a>
+
+<i>Notice</i>, in MAIL Class you can set/define parameters using VERIFICATION or DEPRECATED method.
+<u>Verfication method:</u> use functions to validate (first) and set/define (afther) parameters if is OK.
+<u>Deprecated method:</u> set/define parameters without validation.
+It is NOT recommended to use deprecated method from security reasons.
+
+First of all, for debugging, you must understood the error reporting and trace result system from XPM4.
+<i>Attention</i>, error reporting constants must be defined before require/include any of XPM4 Class file.
+<br>
+<b>Error reporting:</b>
+
+Display (by default is on):
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+// turn on, recommended for debugging mode
+define('DISPLAY_XPM4_ERRORS', true);
+// or turn off, recommended for production mode
+// define('DISPLAY_XPM4_ERRORS', false);
+</code></pre>
+</td></tr>
+</table>
+
+Send mail (it is not recommended to use, because can flood the Mail Server when loop functions are used):
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+$arr = array(
+'type' => 1, 
+'destination' => 'errors@domain.tld', 
+'headers' => 'From: xpm4@domain.tld'
+);
+define('LOG_XPM4_ERRORS', serialize($arr));
+</code></pre>
+</td></tr>
+</table>
+
+Append file (recommended for production mode):
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+$arr = array(
+'type' => 3, 
+'destination' => '/var/tmp/XPM4.log'
+);
+define('LOG_XPM4_ERRORS', serialize($arr));
+</code></pre>
+</td></tr>
+</table>
+
+<b>Trace results:</b>
+
+MAIL Class:
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+$m = new MAIL;
+
+// call 1'st function
+$m->From('me@domain.tld');
+
+// print result from 1'st function
+print_r($m->Result);
+
+// call 2'nd function
+$m->AddTo('client@destination.tld');
+
+// print history, entire result
+print_r($m->History);
+</code></pre>
+</td></tr>
+</table>
+
+SMTP and POP3 Class:
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+// call a function
+SMTP::Connect('smtp.hostname.tld');
+// print result
+print_r($_RESULT);
+</code></pre>
+</td></tr>
+</table>
+
+<hr color="#ffffff">
+
+<b>XPM4 Version:</b> 0.5
+<b>Download:</b> <a href="http://sourceforge.net/project/showfiles.php?group_id=153855&package_id=233288" target="_blank">http://sourceforge.net/project/showfiles.php?group_id=153855&package_id=233288</a>
+<b>Requirements:</b> PHP4 or greater
+<b>Recommended:</b> Latest version of PHP and Unix (generic) or Win NT platform.
+<b>License:</b> GNU/LGPL
+<b>Author:</b> Tanase Laurentiu Iulian
+<b>WebSite:</b> <a href="http://www.xpertmailer.com/" target="_blank">http://www.xpertmailer.com/</a>
+<b>Forum:</b> <a href="http://www.xpertmailer.com/forum/" target="_blank">http://www.xpertmailer.com/forum/</a>
+<b>E-Mail:</b> <a href="mail&#116;&#111;:contact&#064;xpertmailer.com">contact@xpertmailer.com</a>
+
+<hr>
+</pre>
+
+</body>
+</html>

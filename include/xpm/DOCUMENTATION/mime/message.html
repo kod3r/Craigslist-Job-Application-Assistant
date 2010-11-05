@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>MIME::message()</title>
+<style>
+body, pre {
+	font-family: Verdana;
+	font-size: 10pt;
+}
+a {	color: blue; text-decoration: none }
+a:hover { text-decoration: underline }
+</style>
+</head>
+<body bgcolor="#f1f3f5" topmargin="10" leftmargin="14">
+
+<pre>
+<hr color="white">
+MIME :: <i>array</i> <b>message</b> ( <i>string</i> content [, <i>string</i> type [, <i>string</i> name [, <i>string</i> charset [, <i>string</i> encoding [, <i>string</i> disposition [, <i>string</i> id [, <i>integer</i> line_length [, <i>string</i> line_end ]]]]]]]] )
+<hr>
+Return ARRAY ('header' => <i>string</i> value, 'content' => <i>string</i> value).
+
+Default values are:
+<i>string</i> type: application/octet-stream
+<i>string</i> charset: us-ascii
+<i>string</i> encoding: quoted-printable
+<i>string</i> disposition: inline
+<i>integer</i> line_length: 73
+<i>string</i> line_end: CRLF [\r\n]
+
+<i>string</i> encoding possible values are: binary, 7bit, 8bit, quoted-printable or base64
+<i>string</i> disposition possible values are: attachment or inline
+
+Example:
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+// text/plain message
+$mess = MIME::message('Text message', 'text/plain');
+
+// print result
+print_r($mess);
+</code></pre>
+</td></tr>
+</table>
+
+<hr color="white">
+
+See Also: <a href="compose.html">MIME::compose()</a>, <a href="../func/mime_type.html">FUNC::mime_type()</a>
+
+[ <a href="mail&#116;&#111;:contact&#064;xpertmailer.com?subject=Comment MIME message">Comments</a> ]
+
+Last update: Friday, September 21, 2007
+
+<hr>
+</pre>
+
+</body>
+</html>

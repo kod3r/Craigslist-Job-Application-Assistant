@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>MAIL->Priority()</title>
+<style>
+body, pre {
+	font-family: Verdana;
+	font-size: 10pt;
+}
+a {	color: blue; text-decoration: none }
+a:hover { text-decoration: underline }
+</style>
+</head>
+<body bgcolor="#f1f3f5" topmargin="10" leftmargin="14">
+
+<pre>
+<hr color="white">
+MAIL -> <i>boolean</i> <b>priority</b> ( [ <i>mixed</i> level ] )
+<hr>
+Return TRUE if has been successfully set/unset, FALSE if not.
+
+<i>mixed</i> level possible values are: <i>integer</i> 1, 3, 5; <i>string</i> High, Normal, Low
+
+<i>mixed</i> level equivalent values are:
+ <i>integer</i> 1 = <i>string</i> High
+ <i>integer</i> 3 = <i>string</i> Normal
+ <i>integer</i> 5 = <i>string</i> Low
+
+Example (verification):
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+$m = new MAIL;
+
+// set priority to "Normal" or "3"
+$m->Priority(3);
+
+// set priority to "High" or "1"
+$m->Priority('High');
+
+// unset priority
+$m->Priority();
+</code></pre>
+</td></tr>
+</table>
+
+Example (deprecated):
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+$m = new MAIL;
+
+// set priority to "High" or "1"
+$m->Priority = 1;
+
+// unset priority
+$m->Priority = null;
+</code></pre>
+</td></tr>
+</table>
+
+<hr color="white">
+
+See Also: <a href="addheader.html">MAIL->AddHeader()</a>
+
+[ <a href="mail&#116;&#111;:contact&#064;xpertmailer.com?subject=Comment MAIL Priority">Comments</a> ]
+
+Last update: Sunday, June 17, 2007
+
+<hr>
+</pre>
+
+</body>
+</html>

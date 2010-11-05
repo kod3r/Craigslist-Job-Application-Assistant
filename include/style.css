@@ -1,0 +1,160 @@
+/* tables */
+table.post_list {
+	border-width: 1px;
+	border-spacing: 0px;
+	border-style: solid ;
+	border-color: black;
+	border-collapse: collapse;
+}
+table.post_list th {
+	border-width: 1px;
+	padding: 5px;
+	border-style: solid;
+	border-color: black;
+}
+table.post_list td {
+	border-width: 1px;
+	padding: 5px;
+	border-style: solid;
+	border-color: black;
+}
+
+
+table.tablesorter {
+	font-family:arial;
+	background-color:#806D7E;
+	margin:10px 0pt 15px;
+	font-size: 8pt;
+	width: 100%;
+	text-align: left;
+}
+table.tablesorter thead tr th, table.tablesorter tfoot tr th {
+	background-color: #5E5A80;
+/*	border: 1px solid #FFF;*/
+	font-size: 8pt;
+	padding: 4px;
+}
+table.tablesorter thead tr .header {
+	background-image: url(bg.gif);
+	background-repeat: no-repeat;
+	background-position: center right;
+	cursor: pointer;
+	color: #FDD017;	
+}
+table.tablesorter tbody td {
+	color: #7E354D;
+	padding: 4px;
+	background-color: #EBDDE2;
+	vertical-align: top;
+}
+table.tablesorter tbody td.mailed{
+	background-color: #CC66FF;
+	color: #FFF;
+}
+table.tablesorter tbody td.error1 {
+	background-color: red;
+	color: #FDD017;
+}
+table.tablesorter tbody tr.odd td {
+	background-color:#F0F0F6;
+}
+table.tablesorter tbody tr.odd td.error1 {
+	background-color: red;
+	color: #FDD017;
+}
+table.tablesorter tbody tr.odd td.mailed { 
+	background-color: #CC66FF;
+	color: #FFF;
+}
+table.tablesorter thead tr .headerSortUp {
+	background-image: url(asc.gif);
+
+}
+table.tablesorter thead tr .headerSortDown {
+	background-image: url(desc.gif);
+
+}
+table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
+	background-color: #FDD017;
+	color:#5E5A80;
+}
+body { 
+	font: 14px/1.4 Georgia, serif;
+	background-color:#2B1B17;
+}
+div.button  {
+	/*-moz-border-radius: 15px 15px 15px 15px;*/
+	background-color:#5E5A80;	
+	color: #FDD017;
+	border-style:solid;
+	border-width:2px 1px 1px 2px;
+	border-color: #806D7E;
+	cursor: pointer;
+	padding: 2px;
+	width: 130px;
+	font-family: arial;
+	font-size: 8pt;
+	font-weight: bold;
+	text-align: center;
+	margin: 3px;
+}
+div.tabledescbuttons { 
+	float: right;
+}
+div.sidebarbuttons  {
+	width: 95%;
+}
+
+textarea.default { 
+	background-color: #EBDDE2;
+	color: #7E354D;	
+}
+
+* { margin: 0; padding: 0; }
+#page-wrap { width: 600px; margin: 15px auto; }
+p { margin: 0 0 15px 0; }
+p:first-child { background: #fffcde; padding: 10px; }
+#sidebar ul { background: #eee; padding: 10px; }
+li { margin: 0 0 0 20px; }
+#main { width: 390px; float: left; }
+#sidebar { 
+	width: 198px; 
+	float: right; 
+	border-radius: 15px; 
+	background-color: #34282C;
+	margin-top: 7px;
+} 
+a:link { color: #7E354D; }
+a:visited { color #7E354D; }
+a:active { color #7E354D; }
+
+/* Z-index of #mask must lower than #boxes .window */
+mask {
+  position:absolute;
+  z-index:9000;
+  background-color:#E6EEEE;
+  display:none;
+}
+          
+#boxes .window {
+position:absolute;
+width:800px;
+height:500px;
+display:none;
+z-index:9999;
+padding:20px;
+background-color: #2B1B17;
+}
+
+
+/* Customize your modal window here, you can add background image too */
+boxes #dialog {
+width:375px; 
+height:203px;
+background-color: #2B1B17;
+}
+boxes #dialog2 {
+  width:375px;
+  height:203px;
+  background-color: #E6EEEE;
+}

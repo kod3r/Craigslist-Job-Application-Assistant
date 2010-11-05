@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>MIME::split_mail()</title>
+<style>
+body, pre {	font-family: Verdana; font-size: 10pt }
+a {	color: blue; text-decoration: none }
+a:hover { text-decoration: underline }
+</style>
+</head>
+<body bgcolor="#f1f3f5" topmargin="10" leftmargin="14">
+
+<pre>
+<hr color="white">
+MIME :: <i>boolean</i> <b>split_mail</b> ( <i>string</i> mail, <i>array</i> &headers, <i>array</i> &body_parts )
+<hr>
+Return TRUE if has been successfully split, FALSE if not.
+
+<i>array</i> headers format is multidimensional array ('name' => <i>string</i> header_name, 'value' => <i>string</i> header_value, 'content' => <i>array</i> additional).
+The <i>array</i> additional is apply only to header names that begin with "Content-" (case insensitive).
+
+<i>array</i> body_parts format is multidimensional array (['header_content' => array ('value' => <i>string</i> header_value, 'extra' => <i>array</i> additional), ...], 'content' => <i>string</i> decoded_content, ['multipart' => <i>string</i> multipart_order]).
+The <i>string</i> header_content contain value afther "Content-" (case insensitive).
+
+<i>array</i> additional format is multidimensional array (<i>string</i> name, <i>string</i> value)
+
+Example:
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+// standard mail message RFC2822
+$m = 'From: me@addr.net'."\r\n".
+     'To: my@addr.com'."\r\n".
+     'Subject: test'."\r\n".
+     'Content-Transfer-Encoding: base64'."\r\n".
+     'Content-Type: text/plain; charset="ISO-8859-1"'."\r\n\r\n".
+     base64_encode('Text message.');
+
+$r = MIME::split_mail($m, $h, $b);
+
+print_r($h); // print headers
+print_r($b); // print body parts
+</code></pre>
+</td></tr>
+</table>
+
+<hr color="white">
+
+See Also: <a href="split_message.html">MIME::split_message()</a>
+
+[ <a href="mail&#116;&#111;:contact&#064;xpertmailer.com?subject=Comment MIME split_mail">Comments</a> ]
+
+Last update: Sunday, December 09, 2007
+
+<hr>
+</pre>
+
+</body>
+</html>

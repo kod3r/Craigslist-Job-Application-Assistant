@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>MIME::split_header()</title>
+<style>
+body, pre {	font-family: Verdana; font-size: 10pt }
+a {	color: blue; text-decoration: none }
+a:hover { text-decoration: underline }
+</style>
+</head>
+<body bgcolor="#f1f3f5" topmargin="10" leftmargin="14">
+
+<pre>
+<hr color="white">
+MIME :: <i>array</i> <b>split_header</b> ( <i>string</i> headers )
+<hr>
+Return multidimensional ARRAY ('name' => <i>string</i> header_name, 'value' => <i>string</i> header_value, 'content' => <i>array</i> additional).
+
+The <i>array</i> additional is apply only to header names that begin with "Content-" (case insensitive).
+
+<i>array</i> additional format is multidimensional array (<i>string</i> name, <i>string</i> value)
+
+Example:
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+$h = 'Received: by 127.0.0.1 with SMTP id z5mr1680x48fgx;'."\r\n\t".
+     'Sat, 03 Nov 2007 05:33:29 -0700 (PDT)'."\r\n".
+     'Received: from SMTP.Domain.net'."\r\n".
+     'Content-Type: text/plain; charset="utf-8"; parameter="additional"';
+
+$r = MIME::split_header($h);
+
+// print result
+print_r($r);
+</code></pre>
+</td></tr>
+</table>
+
+<hr color="white">
+
+See Also: <a href="isset_header.html">MIME::isset_header()</a>, <a href="decode_header.html">MIME::decode_header()</a>
+
+[ <a href="mail&#116;&#111;:contact&#064;xpertmailer.com?subject=Comment MIME split_header">Comments</a> ]
+
+Last update: Sunday, November 04, 2007
+
+<hr>
+</pre>
+
+</body>
+</html>

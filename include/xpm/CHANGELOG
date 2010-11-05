@@ -1,0 +1,56 @@
+
+XPertMailer v.4 ChangeLog
+=========================
+
+[Sunday, December 09, 2007] Version 4.0.5
+
+- Updated Documentation
+- Added "mime-parse.php" file in EXAMPLES folder to see how you can parse a mail message source
+- Added split_mail() function to get headers and body parts from mail source, on MIME Class
+- Added split_message() function to get header and body from message source, on MIME Class
+
+[Sunday, November 04, 2007] Version 4.0.4
+
+- Updated Documentation
+- Fixed quoted-printable decode option in decode_header() on MIME Class (RFC 2047, 5.(3) [Page 7])
+- Fixed the "name" value when is empty in "From", "To" and "Cc" header value on MAIL Class
+- Fixed the line break for mail body from CRLF to LF in mail() function when OS Windows is not in use on MAIL Class
+- Added the "X-MimeOLE" header name value when "X-MSMail-Priority" is use on MAIL Class
+- Fixed the authentication paramater value in MXConnect() on SMTP Class
+
+[Thursday, September 27, 2007] Version 4.0.3
+
+- Updated Documentation
+- Added pUidl() function to get a unique-id listing on POP3 Class
+- Added the authentication type argument for SMTP login in Connect() on MAIL and SMTP Class
+- Fixed body default maximum line characters in var/const MLEN on MIME Class
+- Fixed MIME-Version header information for all type of messages in compose() on MIME Class
+- Fixed is_mail() function, by added the plus sign, in FUNC Class
+- Fixed default connection type in send() on MAIL5.php file
+
+[Thursday, August 16, 2007] Version 4.0.2
+
+- Updated Documentation
+- Fixed <period> in data() on SMTP Class (RFC2821 section 4.5.2)
+- Changed default <line end> value from LF to CRLF in MIME Class (RFC2821 section 2.3.7)
+- Fixed <new line> in qp_encode() on MIME Class
+- Fixed send QUIT response (SSL encryption bug) to be not read in disconnect() on SMTP Class
+
+[Sunday, July 01, 2007] Version 4.0.1
+
+- Added Documentation for all public functions
+- Fixed AddHeader() in MAIL Class
+- Fixed EOL in MIME class for mail body message
+- Added auto select authentication type for SMTP
+- Added MD5-CRAM authentication support for SMTP
+- Changed the license from GPL to LGPL
+
+[Sunday, June 03, 2007] Beta Version
+
+- Added new features on MAIL class to use "SendMail" or "QMail" Unix program
+- Added example howto use step-by-step SMTP commands
+- Added new features on SMTP class (for basic SMTP commands)
+- Changed trace method for results using variable "$_RESULT"
+- Changed syntax on SMTP class (return value from functions)
+- Added examples howto use POP3 class
+- Added POP3 Class

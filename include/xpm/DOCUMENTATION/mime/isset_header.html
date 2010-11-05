@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>MIME::isset_header()</title>
+<style>
+body, pre {	font-family: Verdana; font-size: 10pt }
+a {	color: blue; text-decoration: none }
+a:hover { text-decoration: underline }
+</style>
+</head>
+<body bgcolor="#f1f3f5" topmargin="10" leftmargin="14">
+
+<pre>
+<hr color="white">
+MIME :: <i>mixed</i> <b>isset_header</b> ( <i>string</i> headers, <i>string</i> name [, <i>string</i> value ] )
+<hr>
+Return boolean FALSE or STRING header name value.
+
+(Search) Header <i>string</i> name and <i>string</i> value are case insensitive (i.e. not case sensitive).
+(Find) The return header <i>string</i> value is case sensitive and is the first occurred.
+
+Example:
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+$h = 'Received: by 127.0.0.1 with SMTP id z5mr1680x48fgx;'."\r\n\t".
+     'Sat, 03 Nov 2007 05:33:29 -0700 (PDT)'."\r\n".
+     'Received: from SMTP.Domain.net'."\r\n".
+     'Content-Type: text/plain; charset="utf-8"';
+
+// verify if "Content-Type" name header is set
+$r = MIME::isset_header($h, 'Content-Type') or die('can not find');
+// or, verify if "Received" name header is set and have "from smtp.domain.net" value
+// $r = MIME::isset_header($h, 'received', 'from smtp.domain.net') or die('can not find');
+
+// print result
+echo $r;
+</code></pre>
+</td></tr>
+</table>
+
+<hr color="white">
+
+See Also: <a href="split_header.html">MIME::split_header()</a>, <a href="decode_header.html">MIME::decode_header()</a>
+
+[ <a href="mail&#116;&#111;:contact&#064;xpertmailer.com?subject=Comment MIME isset_header">Comments</a> ]
+
+Last update: Sunday, November 11, 2007
+
+<hr>
+</pre>
+
+</body>
+</html>

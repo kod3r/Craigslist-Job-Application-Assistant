@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>MIME::decode_content()</title>
+<style>
+body, pre {
+	font-family: Verdana;
+	font-size: 10pt;
+}
+a {	color: blue; text-decoration: none }
+a:hover { text-decoration: underline }
+</style>
+</head>
+<body bgcolor="#f1f3f5" topmargin="10" leftmargin="14">
+
+<pre>
+<hr color="white">
+MIME :: <i>string</i> <b>decode_content</b> ( <i>string</i> content, <i>string</i> encoding )
+<hr>
+Return STRING decoded.
+
+<i>string</i> encoding possible values are: quoted-printable or base64
+
+Example:
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+echo MIME::decode_content('=DCberpr=FCfung', 'quoted-printable');
+</code></pre>
+</td></tr>
+</table>
+
+<hr color="white">
+
+See Also: <a href="decode_header.html">MIME::decode_header()</a>
+
+[ <a href="mail&#116;&#111;:contact&#064;xpertmailer.com?subject=Comment MIME decode_content">Comments</a> ]
+
+Last update: Sunday, November 04, 2007
+
+<hr>
+</pre>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>POP3::pDele()</title>
+<style>
+body, pre {
+	font-family: Verdana;
+	font-size: 10pt;
+}
+a {	color: blue; text-decoration: none }
+a:hover { text-decoration: underline }
+</style>
+</head>
+<body bgcolor="#f1f3f5" topmargin="10" leftmargin="14">
+
+<pre>
+<hr color="white">
+POP3 :: <i>boolean</i> <b>pdele</b> ( <i>resource</i> connection, <i>integer</i> message )
+<hr>
+Return TRUE if has been successfully set, FALSE if not.
+
+Send "DELE" POP3 command and mark the <i>integer</i> message with "delete" flag.
+
+<i>Notice</i>: afther, you must send "QUIT" POP3 command to delete the <i>integer</i> message from server.
+
+<hr color="white">
+
+See Also: <a href="pquit.html">POP3::pQuit()</a>, <a href="disconnect.html">POP3::Disconnect()</a>, <a href="prset.html">POP3::pRset()</a>
+
+[ <a href="mail&#116;&#111;:contact&#064;xpertmailer.com?subject=Comment POP3 pDele">Comments</a> ]
+
+Last update: Friday, September 21, 2007
+
+<hr>
+</pre>
+
+</body>
+</html>

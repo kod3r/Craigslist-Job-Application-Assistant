@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>MAIL->Send()</title>
+<style>
+body, pre {
+	font-family: Verdana;
+	font-size: 10pt;
+}
+a {	color: blue; text-decoration: none }
+a:hover { text-decoration: underline }
+</style>
+</head>
+<body bgcolor="#f1f3f5" topmargin="10" leftmargin="14">
+
+<pre>
+<hr color="white">
+MAIL -> <i>boolean</i> <b>send</b> ( [ <i>mixed</i> type ] )
+<hr>
+Return TRUE if has been successfully sent, FALSE if not.
+
+<i>mixed</i> type default value is <i>string</i> "local".
+
+<i>mixed</i> type possible values are:
+ <i>resource</i> connection ( relay )
+ <i>string</i> local ( use mail() php function )
+ <i>string</i> client ( connect to MX zone )
+ <i>string</i> sendmail ( use "SendMail" generic Unix program )
+ <i>string</i> qmail ( use "QMail" generic Unix program )
+
+<i>Notice</i>, you can redefine the execution path and name for "SendMail" or "QMail" program.
+Default path names are: "/usr/sbin/sendmail" for "SendMail" and "/var/qmail/bin/sendmail" for "QMail".
+
+Example:
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+$m = new MAIL;
+
+// send mail using "mail()" php function
+$m->Send();
+
+// send mail directly to MX host
+$m->Send('client');
+
+// optional, you can redefine the execution path and name for "SendMail" or "QMail" program
+// $m->SendMail = '/new-path/sendmail';
+// send mail using "SendMail" generic Unix program
+$m->Send('sendmail');
+
+// connect to SMTP server
+$c = $m->Connect('smtp.hostname.tld');
+// send mail relay using '$c' resource connection
+$m->Send($c);
+</code></pre>
+</td></tr>
+</table>
+
+<hr color="white">
+
+See Also: <a href="connect.html">MAIL->Connect()</a>, <a href="context.html">MAIL->Context()</a>
+
+[ <a href="mail&#116;&#111;:contact&#064;xpertmailer.com?subject=Comment MAIL Send">Comments</a> ]
+
+Last update: Sunday, June 17, 2007
+
+<hr>
+</pre>
+
+</body>
+</html>

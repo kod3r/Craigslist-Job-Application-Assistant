@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>MAIL->Connect()</title>
+<style>
+body, pre {
+	font-family: Verdana;
+	font-size: 10pt;
+}
+a {	color: blue; text-decoration: none }
+a:hover { text-decoration: underline }
+</style>
+</head>
+<body bgcolor="#f1f3f5" topmargin="10" leftmargin="14">
+
+<pre>
+<hr color="white">
+MAIL -> <i>mixed</i> <b>connect</b> ( <i>string</i> address [, <i>integer</i> port [, <i>string</i> username [, <i>string</i> password [, <i>string</i> ssl [, <i>integer</i> timeout [, <i>string</i> name [, <i>resource</i> context [, <i>string</i> auth_type ]]]]]]]] )
+<hr>
+Return RESOURCE connection if has been successfully connected, boolean FALSE if not.
+
+Default values are:
+<i>integer</i> port: 25
+<i>integer</i> timeout: 30
+<i>string</i> name: localhost
+
+<i>string</i> ssl possible values are: tls, ssl, sslv2 or sslv3
+
+<i>Notice</i>: <i>string</i> address can have hostname or IPv4 value.
+The standard port values are: 25 - default, and 465 - SSL (secure).
+<i>string</i> name is used in EHLO/HELO SMTP conversation.
+
+Example (verification):
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+$m = new MAIL;
+
+// connect to 'smtp.hostname.tld' port '25' with authentication
+$c = $m->Connect('smtp.hostname.tld', 25, 'username', 'password') or die(print_r($m->Result));
+
+// send mail relay via '$c' resource connection
+$m->Send($c);
+</code></pre>
+</td></tr>
+</table>
+
+Example (deprecated):
+<table border="0" bgcolor="white">
+<tr><td>
+<pre><code>
+$m = new MAIL;
+
+// define connection parameters value
+$m->Host = 'smtp.hostname.tld'; // address
+$m->Port = 465; // port
+$m->User = 'username'; // username
+$m->Pass = 'password'; // password
+$m->Vssl = 'tls'; // SSL
+$m->Tout = 10; // timeout in seconds
+$m->Name = 'localhost'; // local hostname (used in EHLO/HELO SMTP conversation)
+$m->Auth = 'cram-md5'; // authentication type
+
+// connect using this parameters
+$c = $m->Connect() or die(print_r($m->Result));
+</code></pre>
+</td></tr>
+</table>
+
+<hr color="white">
+
+See Also: <a href="disconnect.html">MAIL->Disconnect()</a>, <a href="context.html">MAIL->Context()</a>, <a href="send.html">MAIL->Send()</a>
+
+[ <a href="mail&#116;&#111;:contact&#064;xpertmailer.com?subject=Comment MAIL Connect">Comments</a> ]
+
+Last update: Monday, June 11, 2007
+
+<hr>
+</pre>
+
+</body>
+</html>
