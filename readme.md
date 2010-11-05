@@ -10,7 +10,7 @@
 
 - finish text editor integration 
 - hook in a few buttons
-- fix scrolling 
+- fix scrolling (for the popup windows, its a little buggy but works.) 
 - ajax / json for editor (load / save)
 - for some reason, in the mailer class the return receipt line I added to the headers I doesnt seem to work.
 - Add send e-mail functionality
