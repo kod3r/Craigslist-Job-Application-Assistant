@@ -577,6 +577,7 @@ print "<th width='70'>modified</th>\n";
 print "</tr>\n";
 print "</thead><tbody>\n";
 foreach ($feed->getPosts() as $post) {
+	$row = array('modified' => 'N/A');
 	$please = FALSE;
 	$sql = "SELECT * FROM logs WHERE url='$post[link]' LIMIT 1";
 	$res = $mysql->query($sql);
@@ -625,9 +626,12 @@ foreach ($feed->getPosts() as $post) {
 
 <br /><br />
 <?
-	$uhm = mysql_fetch_row($res);
+	//$uhm = mysql_fetch_row($res);
+	//if($uhm == NULL) { 
+	//	$uhm = array('3' => 'N/A');
+	//}
 	print "</td>\n";
-	print "<td>". $uhm[3]."</td>";
+	print "<td>". $row['modified']."</td>";
 	print "</tr>\n";
 }
 print "<tr>\n";
