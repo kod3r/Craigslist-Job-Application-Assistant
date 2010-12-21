@@ -68,6 +68,16 @@ class Mysql
 				) ENGINE = MYISAM")) {
 					die("could not create table: " .mysql_error());
 			}
+			if(!$this->query("
+				CREATE TABLE IF NOT EXISTS `messages` (
+					`id` int(11) NOT NULL auto_increment,
+				      	`url` varchar(255) NOT NULL,
+				      	`content` text NOT NULL,
+				      	`modified` timestamp NOT NULL default CURRENT_TIMESTAMP,
+				      	PRIMARY KEY  (`id`),
+					KEY `id` (`id`)) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=39 ;")) {
+						die("could not create table: " .mysql_error());
+			}
 
 		} else {
 			die("no database specified in config");//$this->database = NULL;

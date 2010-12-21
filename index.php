@@ -90,6 +90,15 @@ if(isset($_GET["ajax"]) && $_GET["ajax"] == 1) {
 	//fetching email address from posting by job id
 	exit();
 	
+} else if(isset($_GET["ajax"]) && $_GET["ajax"] == 9) { 
+	// save message by job id
+	$mysql = new Mysql($config['mysql']['username'], $config['mysql']['password'], $config['mysql']['database'], $config['mysql']['host']);
+	SendJSONResponse(SaveCustomMessage($mysql, $_POST["selected"], $_POST["content"]));	
+	exit();
+} else if(isset($_GET["ajax"]) && $_GET["ajax"] == 10) { 
+	$mysql = new Mysql($config['mysql']['username'], $config['mysql']['password'], $config['mysql']['database'], $config['mysql']['host']);
+	SendJSONResponse(GetCustomMessageOrDefault($mysql, $_POST["selected"]), TRUE);
+	exit();
 } else { 
 	$mysql = new Mysql($config['mysql']['username'], $config['mysql']['password'], $config['mysql']['database'], $config['mysql']['host']);
 	$attachment_files = setupAttachments(array(), $mysql, TRUE);
@@ -152,14 +161,53 @@ function FetchCoverLetterByJobIDOrGetDefault($mysql, $jobid, $ajax=TRUE) {
 	return($ret);
 }
 */
-function GetCoverLetterOrDefault($mysql, $selected, $ajax=TRUE) { 
+
+function SaveCustomMessage($mysql, $jobid, $content, $ajax=TRUE) { 
+	$ret = array();
+	// Will keep this out for now because its nice to have revisions around
+	// //	$sql = "DELETE from coverletters where jobid = '".$jobid."'";
+	// //	$mysql->query($sql);
+	$sql = "insert into messages (url, content) VALUES('" .$jobid."', '".$content."')";
+	$success = $mysql->query($sql);
+	if(!$success)
+		/* TODO: refactor */
+		if($ajax) {
+			array_push($ret, array("save_success" => "<strong>ERROR:</strong> " . $mysql->getError() . "<br/>\n"));	
+			return($ret);
+		}
+		else 
+			print "<strong>ERROR:</strong> " . $mysql->getError() . "<br/>\n";
+	else {
+		array_push($ret, array("save_success" => "successfully saved.")); 
+		return($ret);
+	}
+}
+
+function GetCustomMessageOrDefault($mysql, $selected, $ajax=TRUE) { 
 	$jobid = $selected;
-	$sql = "select * from coverletters where url = '" .$jobid."' LIMIT 1";
+	$sql = "select * from messages where url = '" .$jobid."'ORDER BY `modified` DESC LIMIT 1";
 	$success = $mysql->query($sql);
 	if(!$success)
 		$ret = SQLMessage($ret, "ERROR: ".  $mysql->getError(), $ajax);
 	if($mysql->GetNumRows() == 0) {
-		$sql = "select * from coverletters where url = 'default' LIMIT 1";
+		$sql = "select * from messages where url = 'default' ORDER BY `modified` DESC LIMIT 1";
+		$success = $mysql->query($sql);
+		if(!$success) 
+			$ret = SQLMessage($ret, "ERROR: ".  $mysql->getError(), $ajax);
+	}
+	$message = $mysql->fetchAssoc();
+	$message["jobid"] = $selected;
+	return($message);
+}
+
+function GetCoverLetterOrDefault($mysql, $selected, $ajax=TRUE) { 
+	$jobid = $selected;
+	$sql = "select * from coverletters where url = '" .$jobid."' ORDER BY `modified` DESC LIMIT 1";
+	$success = $mysql->query($sql);
+	if(!$success)
+		$ret = SQLMessage($ret, "ERROR: ".  $mysql->getError(), $ajax);
+	if($mysql->GetNumRows() == 0) {
+		$sql = "select * from coverletters where url = 'default' ORDER BY `modified` DESC LIMIT 1";
 		$success = $mysql->query($sql);
 		if(!$success) 
 			$ret = SQLMessage($ret, "ERROR: ".  $mysql->getError(), $ajax);
@@ -569,6 +617,7 @@ foreach ($feed->getPosts() as $post) {
 	<div id="<? echo $post['title'];?>" class="customsubjectbutton button tabledescbuttons"><center>Edit Subject Line</center></div>
 	<div id="<? echo $post['link'];?>" class="customrecipientbutton button tabledescbuttons"><center>Edit RCPT Address</center></div>
 	<div id="<? echo $post['link'];?>" class="sendemailbutton button tabledescbuttons"><center>Send E-mail</center></div>
+	<div id="<? echo $post['link'];?>" class="custommessagebutton button tabledescbuttons"><center>Edit Message</center></div>
 
 <br /><br />
 <?
@@ -599,18 +648,26 @@ $(document).ready(function() {
 	
 
 });
+
+/* This is the Iterate Posts progress event handler that updates the status box, its also used by the coverletter's ajax calls. */
 function updateProgress(data, textStatus, xmlHTTPRequest) { 
 	for(var i = 0; i< data.length; i++) { 
+		if(data.length < 1) 
+			return;
 		$("#statusmlist").prepend("<li><span style='color: green;'>"+data[i][0]+"</span></li>");
 		//$("#statusm").scrollBottom = $("#statusm").scrollHeight;
 	}
 }
+
+/* Iterate Posts Error Handler its also used by the coverletter's ajax calls. */
 function iteratePostsError(XMLHttpRequest, textStatus, errorThrown) { 
 	//alert(textStatus);
 	//alert(errorThrown);
 	$("#statusmlist").prepend("<li><span style='color: red;'>"+textStatus+"</span></li>");
 	$("#statusmlist").prepend("<li><span style='color: red;'>"+errorThrown+"</span></li>");
 }
+
+/* Iterate checked jobs and send them to the server to be contacted */
 function iteratePosts(whatkind) {
 	var sel = $(whatkind);
 	for(var i = 0; i < sel.length; i++) { 
@@ -620,21 +677,11 @@ function iteratePosts(whatkind) {
 			type: "POST", 
 			//contentType: "application/x-www-form-urlencoded",
 			data: { selected: sel[i].value },
-			//context: document.body, <-- what is this even for :< *angry* *angry* *angry*
 			dataType: "json",
 			success: updateProgress,
 			error: iteratePostsError,
 		});
-/*
-		$.post({
-			url: "index.php?ajax=1",
-			
-			context: document.body,
-			type: "json",
-			callback: updateProgress,
-			error: iteratePostsError,
-	});
-*/
+
 	}
 	if(whatkind == "input:checked") {
 		//* TODO: there should be code to determine whether or not it was successful or an error. */
@@ -647,11 +694,7 @@ function iteratePosts(whatkind) {
 	return false;
 }
 
-
-//$(document).ready(function() {	
-
-	//select all the a tag with name equal to modal
-	//$('a[name=modal]').click(function(e) {
+/* function for drawing dialog windows */
 function showModalWindow(content, which) {
 	// 	ck editor broken.
 	//	$('#editor1').ckeditor( function() { }, { skin : 'office2003' } );
@@ -662,9 +705,7 @@ function showModalWindow(content, which) {
 	//	tinyMCE.execCommand('mceInsertContent',false,'<br><img alt=$img_title src=$link/img/sadrzaj/$file\>');">Insert Image</a>
 		$('textarea.tinymce').tinymce().execCommand('mceInsertContent',true, content);
 		
-		//Cancel the link behavior
-	//	e.preventDefault();
-		//Get the A tag
+		// which dialog to show
 		var id = which;
 
 		//Get the screen height and width
@@ -689,21 +730,22 @@ function showModalWindow(content, which) {
 		//transition effect
 		$(id).fadeIn(2000); 
 	
-	};
+};
 	
-	//if close button is clicked
-	$('.window .close').click(function (e) {
+/* if Dialog's close button is clicked */
+$('.window .close').click(function (e) {
 		//Cancel the link behavior
 		e.preventDefault();
 		$('#mask, .window').hide();
-	});		
+});		
 	
-	//if mask is clicked
-	$('#mask').click(function () {
+/* If Dialog's Mask is clicked */
+$('#mask').click(function () {
 		$(this).hide();
 		$('.window').hide();
-	});			
-	
+});
+
+/* Contact Selected Jobs */	
 $('#senddata').submit(function() {
 	// I think this can also be accomplished with e.preventDefault()
 	return(iteratePosts("input:checked"));
@@ -714,32 +756,16 @@ $('#other').click(function() {
 function fetchCoverLetter(data, textStatus, xmlHTTPRequest)
 {
 	$('.closebutton2').attr("id", data.jobid);
-	//$('textarea.tinymce').tinymce().execCommand('mceInsertContent', false, data[0].content.toString());
 	showModalWindow(data.content, '#dialog');
 }
 function saveCoverLetterStatus(data, textStatus, xmlHTTPRequest) { 
+	if(data.length < 1) { 
+		return;
+	}
 	$("#statusmlist").prepend("<li><span style='color: green; background-color: black;'>" + data[0].save_success + "</span></li>");
 }
-$('.closebutton2').click(function(e) {
-	var selectid = this.id;
-	//	var savedefaultselectbox = $('#savedefault');
-	/*if($("#savedefault:checked").val() !== null) { 
-		selectid = "default";
-}*/
-	$.ajax({
-		url: "index.php?ajax=4",
-		data: { 
-			selected: selectid, 
-			content: $('textarea.tinymce').tinymce().getContent() 
-		},	
-		type: "POST", 
-		dataType: "json",
-		success: saveCoverLetterStatus,
-		error: iteratePostsError,
-	});
-	return(false);
-});
 
+/* Edit Cover Letter */
 $('.coverletterbutton').click(function(e) {
 	$.ajax({ 
 		url: "index.php?ajax=2",  
@@ -749,28 +775,58 @@ $('.coverletterbutton').click(function(e) {
 		success: fetchCoverLetter,
 		error: iteratePostsError,
 	});
+	/* Save CoverLetter - Bind button */
+	$('.closebutton2').unbind('click');
+	$('.closebutton2').click(function(e) {
+		var savedefault = $('#savedefault:checked').length;
+	
+		if(savedefault > 0) {
+			selectid = "default";
+		}
+		else {
+			var selectid = this.id;
+		}
+		$.ajax({
+			url: "index.php?ajax=4",
+			data: { 
+				selected: selectid, 
+				content: $('textarea.tinymce').tinymce().getContent() 
+			},	
+			type: "POST", 
+			dataType: "json",
+			success: saveCoverLetterStatus,
+			error: iteratePostsError,
+		});
+		return(false);
+	});
 	return(false);
 });
+/* Edit Subject Line */
 $('.customsubjectbutton').click(function(e) {
 	showModalWindow(this.id, '#dialog');
 
 });
- $('.customrecipientbutton').click(function(e) {
+/* Edit Recipient */
+$('.customrecipientbutton').click(function(e) {
 	 showModalWindow(this.id, '#dialog');
 });
+/* View Log */
 $('#viewlogbutton').click(function(e) {
 	showModalWindow(this.id, '#dialog2');
 });
+/* Send Email */
 $('.sendemailbutton').click(function(e) {
 	alert("todo");//showModalWindow(e, this.id, '#dialog2');
 });
-
+/* Recontact contacted Posts */
 $('#recontact').click(function(e) {
 	iteratePosts("input:disabled");
 });
+/* Deselect all checked jobs */
 $('#uncheckall').click(function(e) {
 	alert("todo");
 });
+/* Show Selection Summary */
 $('#selectionsummary').click(function(e) {
 	alert("todo");
 });
@@ -780,8 +836,48 @@ $('#sidebarsortbycombobutton').click(function(e) {
 $('#dialog3').click(function(e) {
 		$('#dialog3').css("visibility", "hidden");
 });
+/* customize message fetch handler */
+function fetchCustomMessage(data, textStatus, xmlHTTPRequest)
+{
+	$('.closebutton2').attr("id", data.jobid);
+	showModalWindow(data.content, '#dialog');
+}
+/* customize message */
+$('.custommessagebutton').click(function(e) {
+	$.ajax({ 
+		url: "index.php?ajax=10",  
+		data: { selected:  this.id },	
+		type: "POST", 
+		dataType: "json",
+		success: fetchCustomMessage,
+		error: iteratePostsError,
+	});
+	/* Save Custom Message - Bind button */
+	$('.closebutton2').unbind('click');
+	$('.closebutton2').click(function(e) {
+		var savedefault = $('#savedefault:checked').length;
+	
+		if(savedefault > 0) {
+			selectid = "default";
+		}
+		else {
+			var selectid = this.id;
+		}
+		$.ajax({
+			url: "index.php?ajax=9",
+			data: { 
+				selected: selectid, 
+				content: $('textarea.tinymce').tinymce().getContent() 
+			},	
+			type: "POST", 
+			dataType: "json",
+			success: saveCoverLetterStatus,
+			error: iteratePostsError,
+		});
+		return(false);
+	});
+});
 </script>
-
 
 </div>
 </div>
