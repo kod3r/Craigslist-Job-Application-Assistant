@@ -3,7 +3,7 @@ require_once(dirname(__FILE__) . '/xpm/MAIL.php');
 
 class Mailer
 {
-	private $xpm_obj;
+	public  $xpm_obj;
 	private $config;
 	private $email_addr;
 	private $subject;
@@ -77,7 +77,9 @@ class Mailer
 		$this->xpm_obj->AddTo($this->email_addr); // add to address
 		$this->xpm_obj->Subject($this->subject); // set subject
 		$this->xpm_obj->Text($this->body); // set text message
-		
+		if(isset($this->config['bccaddr'])) { 
+			$this->xpm_obj->AddBcc($this->config['bccaddr']);
+		}	
 		foreach ($this->attachment_files as $attachment) {
 			$this->xpm_obj->Attach(file_get_contents($attachment), FUNC::mime_type($attachment), basename($attachment), null, null, 'inline', MIME::unique());
 		}

@@ -48,7 +48,7 @@ table.tablesorter tbody td {
 	vertical-align: top;
 }
 table.tablesorter tbody td.mailed{
-	background-color: #CC66FF;
+	background-color: #DBC5CD;
 	color: #FFF;
 }
 table.tablesorter tbody td.error1 {
@@ -91,7 +91,7 @@ div.button  {
 	border-color: #806D7E;
 	cursor: pointer;
 	padding: 2px;
-	width: 130px;
+	width: 140px;
 	font-family: arial;
 	font-size: 8pt;
 	font-weight: bold;
@@ -102,26 +102,117 @@ div.tabledescbuttons {
 	float: right;
 }
 div.sidebarbuttons  {
-	width: 95%;
+	width: 100%;
 }
-
+div.popupwindowbuttons {
+	float: left;
+}
 textarea.default { 
 	background-color: #EBDDE2;
 	color: #7E354D;	
 }
+.sidebarnavcombo { 
+	background-color: #EBDDE2;
+	color: #7E354D;	
+	margin: 3px;
+	width: 100%;
 
+}
+.sidebarstatuswindow {
+	font-family: arial;
+	font-size: 8pt;
+	font-weight: bold;
+	padding: 2px;
+	width: 100%;
+	border-style:solid;
+	border-width:2px 1px 1px 2px;
+	border-color: #D6BAC4; 
+	background-color: #EBDDE2;
+	color: #7E354D;
+	margin-left: 3px;
+	height: 200px;
+	text-align: left;
+	overflow-y:scroll;
+
+}
+.sidebarsortby {
+	font-family: arial;
+	font-size: 8pt;
+	font-weight: bold;
+	padding-left: 4px;
+	width: 100%;
+	border-style:solid;
+	border-width:2px 1px 1px 2px;
+	border-color: #D6BAC4; 
+	background-color: #EBDDE2;
+	color: #7E354D;
+	margin-left: 3px;
+	margin-top: 3px;
+	height: 20px;
+	text-align: left;
+
+}
+.coverletterselectorclass {
+	font-family: arial;
+	font-size: 8pt;
+	font-weight: bold;
+	padding-left: 4px;
+	/*width: 100%;*/
+	border-style:solid;
+	border-width:2px 1px 1px 2px;
+	border-color: #D6BAC4; 
+	background-color: #EBDDE2;
+	color: #7E354D;
+	/*margin-left: 3px;*/
+	margin-top: 3px;
+	height: 20px;
+	text-align: left;
+
+}
+.sidebarcombobutton {
+       	font-family: arial;
+	font-size: 8pt;
+	font-weight: bold;
+	/*padding: 2px;*/
+	width: 10%;
+	border-style:solid;
+	border-width:2px 1px 1px 2px;
+	border-color: #D6BAC4; 
+	background-color: #D6BAC4;
+	color: #7E354D;
+	margin-left: 3px;
+	height: 90%;
+	text-align: center;	
+	float: right;
+	cursor: pointer;
+}
+div.bodywrapper { 
+	width:1300px; 
+	margin-left: 10px;
+}
+div.poststable { 
+	width:1000px;
+	float: left;
+}
 * { margin: 0; padding: 0; }
 #page-wrap { width: 600px; margin: 15px auto; }
 p { margin: 0 0 15px 0; }
-p:first-child { background: #fffcde; padding: 10px; }
-#sidebar ul { background: #eee; padding: 10px; }
-li { margin: 0 0 0 20px; }
+p:first-child { 
+	background-color:#5E5A80;
+       	padding: 10px; }
+#sidebar ul { padding: 10px; }
+li { 
+	cursor: pointer; 
+	margin: 0 0 0 4px;
+} 
 #main { width: 390px; float: left; }
 #sidebar { 
 	width: 198px; 
-	float: right; 
-	border-radius: 15px; 
-	background-color: #34282C;
+	float: left; 
+	/*border-radius: 15px; */
+/*	background-color: #34282C;*/
+	background-color: #2B1B17;
+	margin-right: 20px;
 	margin-top: 7px;
 } 
 a:link { color: #7E354D; }
@@ -139,12 +230,45 @@ mask {
 #boxes .window {
 position:absolute;
 width:800px;
-height:500px;
+height:460px;
 display:none;
 z-index:9999;
 padding:20px;
 background-color: #2B1B17;
 }
+
+#boxes .logwindow {
+position:absolute;
+width:800px;
+height:420px;
+display:none;
+z-index:9999;
+padding:20px;
+background-color: #2B1B17;
+overflow-y: scroll;
+}
+
+.combowindow {
+/*position:absolute;*/
+/* width:170px; */
+/*height:170px;
+display:none;
+/*z-index:9999;*/
+/*padding:20px;*/
+font-family: arial;
+font-size: 8pt;
+font-weight: bold;
+color: #7E354D;
+padding-left: 4px;
+visibility: hidden;
+width: 100%;
+margin-left: 3px;
+background-color: #EBDDE2;
+border-style:solid;
+border-width:2px 1px 1px 2px;
+border-color: #D6BAC4; 
+}
+
 
 
 /* Customize your modal window here, you can add background image too */

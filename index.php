@@ -15,6 +15,7 @@ require_once(dirname(__FILE__) . '/include/craigslist_feed.class.php');
 require_once(dirname(__FILE__) . '/include/mailer.class.php');
 require_once(dirname(__FILE__) . '/include/mysql.class.php');
 require_once(dirname(__FILE__) . '/config/config.inc.php');
+require_once(dirname(__FILE__) . '/include/html2doc.php');
 
 function SendJSONResponse($data)  {
 	/*echo json_encode(
@@ -45,7 +46,8 @@ function SendJSONResponse($data)  {
 if(isset($_GET["ajax"]) && $_GET["ajax"] == 1) {
 	// contacting a job posting
 	$attachmentmessages = array();
-	$_POST["selected"] = array($_GET["selected"]);
+	//$_POST["selected"] = array($_GET["selected"]); don't need this anymore
+	$_POST["selected"] = array($_POST["selected"]);
 	$mysql = new Mysql($config['mysql']['username'], $config['mysql']['password'], $config['mysql']['database'], $config['mysql']['host']);
 	$attachment_files = setupAttachments(array(), $mysql, TRUE);
 	if(is_array($attachment_files[count($attachment_files)-1])) 	
@@ -57,6 +59,9 @@ if(isset($_GET["ajax"]) && $_GET["ajax"] == 1) {
 	exit();
 } else if(isset($_GET["ajax"]) && $_GET["ajax"] == 2) {
 	//fetching coverletter by job id
+	$mysql = new Mysql($config['mysql']['username'], $config['mysql']['password'], $config['mysql']['database'], $config['mysql']['host']);
+	SendJSONResponse(GetCoverLetterOrDefault($mysql, $_POST["selected"]), TRUE);	
+	//
 	exit();
 	
 } else if(isset($_GET["ajax"]) && $_GET["ajax"] == 3) {
@@ -65,6 +70,8 @@ if(isset($_GET["ajax"]) && $_GET["ajax"] == 1) {
 	
 } else if(isset($_GET["ajax"]) && $_GET["ajax"] == 4) {
 	//saving coverletter by job id
+	$mysql = new Mysql($config['mysql']['username'], $config['mysql']['password'], $config['mysql']['database'], $config['mysql']['host']);
+	SendJSONResponse(SaveCoverLetter($mysql, $_POST["selected"], $_POST["content"]));
 	exit();
 	
 } else if(isset($_GET["ajax"]) && $_GET["ajax"] == 5) {
@@ -88,7 +95,214 @@ if(isset($_GET["ajax"]) && $_GET["ajax"] == 1) {
 	$attachment_files = setupAttachments(array(), $mysql, TRUE);
 	$feed = new CraigslistFeed();
 }
+function SaveCoverLetter($mysql, $jobid, $content, $ajax=TRUE) { 
+	$ret = array();
+// Will keep this out for now because its nice to have revisions around
+//	$sql = "DELETE from coverletters where jobid = '".$jobid."'";
+//	$mysql->query($sql);
+	$sql = "insert into coverletters (url, content) VALUES('" .$jobid."', '".$content."')";
+	$success = $mysql->query($sql);
+	if(!$success)
+		/* TODO: refactor */
+		if($ajax) {
+			array_push($ret, array("save_success" => "<strong>ERROR:</strong> " . $mysql->getError() . "<br/>\n"));	
+			return($ret);
+		}
+		else 
+			print "<strong>ERROR:</strong> " . $mysql->getError() . "<br/>\n";
+	else {
+		array_push($ret, array("save_success" => "successfully saved.")); 
+		return($ret);
+	}
 
+}
+/*
+function FetchCoverLetterByJobIDOrGetDefault($mysql, $jobid, $ajax=TRUE) {
+	$ret = array();
+	$sql = "select * from coverletters where url = '" .$jobid."' LIMIT 1";
+	$success = $mysql->query($sql);
+	if(!$success)
+		if($ajax)
+			array_push($ret, "<strong>ERROR:</strong> " . $mysql->getError() . "<br/>\n");
+		else 
+			print "<strong>ERROR:</strong> " . $mysql->getError() . "<br/>\n";
+	if($mysql->GetNumRows() == 0) {
+		$sql = "select * from coverletters where url = 'default' LIMIT 1";
+	}
+	else {
+		$decoded = $mysql->fetchAssoc();
+		$decoded["content"] = $decoded["content"];
+		$decoded["jobid"] = $jobid;
+		array_push($ret, $decoded); 
+		return($ret);
+	}
+	$success = $mysql->query($sql);
+	if(!$success)
+		if($ajax)
+			array_push($ret, "<strong>ERROR:</strong> " . $mysql->getError() . "<br/>\n");
+		else 
+			print "<strong>ERROR:</strong> " . $mysql->getError() . "<br/>\n";
+	else {
+		$decoded = $mysql->fetchAssoc();
+		$decoded["content"] = $decoded["content"];
+		$decoded["jobid"] = $jobid;
+		array_push($ret, $decoded); 
+		return($ret);
+	}
+	return($ret);
+}
+*/
+function GetCoverLetterOrDefault($mysql, $selected, $ajax=TRUE) { 
+	$jobid = $selected;
+	$sql = "select * from coverletters where url = '" .$jobid."' LIMIT 1";
+	$success = $mysql->query($sql);
+	if(!$success)
+		$ret = SQLMessage($ret, "ERROR: ".  $mysql->getError(), $ajax);
+	if($mysql->GetNumRows() == 0) {
+		$sql = "select * from coverletters where url = 'default' LIMIT 1";
+		$success = $mysql->query($sql);
+		if(!$success) 
+			$ret = SQLMessage($ret, "ERROR: ".  $mysql->getError(), $ajax);
+	}
+	$coverLetter = $mysql->fetchAssoc();
+	$coverLetter["jobid"] = $selected;
+	return($coverLetter);
+}
+function setupAttachments($attachment_files, $mysql, $ajax = FALSE) {
+	$attachment_dir = dirname(__FILE__) . '/config/attachments/';
+	$success = file_exists(dirname(__FILE__) . '/config/email.txt');
+	if($ajax)
+		$setupAttachmentsret = array();
+	if(!$success)
+		$setupAttachmentsret = AttatchmentMessage($setupAttachmentsret, "ERROR: email file: config/email.txt does not exist");
+
+	if ($handle=opendir($attachment_dir)) {
+		while (false !== ($file = readdir($handle))) {
+			if ($file == '.' | $file == '..') {
+				continue;
+			}
+			array_push($attachment_files, $attachment_dir . $file);
+		}
+		if (count($attachment_files) < 1) {
+			$setupAttachmentsret = AttatchmentMessage($setupAttachmentsret,"WARNING: too few attachments in: $attachment_dir");
+		}
+	} else {
+		$setupAttachmentsret = AttatchmentMessage($setupAttachmentsret, "Cannot open attachments directory");	
+	}
+	array_push($attachment_files, $setupAttachmentsret);
+	return($attachment_files);
+}
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+	ProcessPost($mysql, $config, $attachment_files);
+}
+function AttachmentMessage($msgstack, $message) { 
+	if(!is_array($msgstack)) { 
+		$msgstack = array();
+	}
+	if($ajax)
+		array_push($msgstack, $message);
+	else
+		print $message; 
+}
+function SQLMessage($msgstack, $message, $ajax) {
+	if(!is_array($msgstack)) { 
+		$msgstack = array();
+	}
+	if($ajax)
+		array_push($msgstack, $message);
+	else 
+		print $message;
+}
+function MailerMessage($msgstack, $message, $ajax, $selected, $type, $mysql=NULL) {
+	if(!is_array($msgstack)) { 
+		$msgstack = array();
+	}
+	if($ajax)
+		array_push($msgstack, $message);
+	else
+		//print "DEBUG MODE:  will not email out: disabled.  address to send to is: " . $mailer->getEmailAddress() . "<br/>\n";
+		print $message;
+	if($mysql != NULL) { 
+		$sql = "INSERT INTO logs (url, status) VALUES ('$selected', '$type')";
+		$success = $mysql->query($sql);
+		if(!$success)
+			$ret = SQLMessage($ret, "ERROR: ".  $mysql->getError(), $ajax);
+	}
+	return($msgstack);
+}
+function ProcessPost($mysql, $config, $attachment_files, $ajax = FALSE) {
+	if($ajax) 
+		$ret = array();
+	foreach ($_POST['selected'] as $selected) {
+		try {
+			$mailer = new Mailer($selected, $config, $attachment_files, $ajax);
+			$coverLetter = GetCoverLetterOrDefault($mysql, $selected);		
+			/* convert this HTML Doc to a word doc :D
+			 * http://www.phpclasses.org/browse/file/14707.html 
+			 */
+			$doc = "";
+			$myhtmldocfactory = new HTML_TO_DOC();
+			$myhtmldocfactory->_parseHtml($coverLetter["content"]);
+			$doc = $myhtmldocfactory->getHeader();
+			$doc .= $myhtmldocfactory->htmlBody;
+			$doc .= $myhtmldocfactory->getFotter();
+			$mailer->xpm_obj->Attach($doc, "application/msword", "coverletter.doc", null, null, 'inline', MIME::unique());
+			/**/
+			if ($config['debug'] == true) {			
+
+				$ret = MailerMessage(
+					$ret, 
+					"DEBUG MODE:  will not email out: disabled.  address to send to is: " . $mailer->getEmailAddress() . "<br/>\n", 
+					$selected,
+					"notice",
+					$ajax);
+				continue;
+				 
+			}
+			if ( $mailer->send() !== true ) {
+				$ret = MailerMessage(
+					$ret, 
+					"Error Sending Email: " . $mailer->getEmailAddress() . "<br/>\n", 
+					$ajax, 
+					$selected,
+					"error",
+					$mysql
+				);
+			} 
+			else {
+				$ret = MailerMessage(
+					$ret, 
+					"Successfully Mailed: " . $mailer->getEmailAddress() . "<br/>\n", 
+					$ajax, 
+					$selected,
+					"sent",
+					$mysql
+				);
+			}
+		
+		} 
+		catch (Exception $e) {
+			$ret = MailerMessage(
+				$ret,
+				"Email exception caught in post",
+				$ajax,
+				$selected,
+				"error",
+				$mysql
+			);
+		}
+	}
+	if($ajax) { 
+		return($ret);
+	}
+	else if ($config['display_posts_after_email'] == false) {
+		die();
+	}
+}
+
+//ie quirks 
+print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
 print "<html>\n";
 print "<head>\n";
 
@@ -156,7 +370,7 @@ print "<body>\n";
 
   <div id="boxes">
        <!-- #customize your modal window here -->
-	<div id="dialog2" class="window">
+	<div id="dialog2" class="logwindow window">
 <?
  print "<table class='tablesorter' id='myTable2'>\n";
  print "<thead>\n";
@@ -167,7 +381,7 @@ print "<body>\n";
  print "<th>modified</th>\n";
  print "</tr>\n";
  print "</thead><tbody>\n";
- $sql = "SELECT * FROM logs where status = 'error'";
+ $sql = "SELECT * FROM logs";
  $res = $mysql->query($sql);
  while($row = mysql_fetch_row($res)) { 
   print "<tr>\n";
@@ -177,43 +391,42 @@ print "<body>\n";
  print "</tbody></table>";
 
 ?>
-<a href="#" class="close">Close it</a>
+<!--a href="#" class="close">Close it</a-->
+<center><div id="closebutton" class="button popupwindowbuttons close"><center>Close</center></div></center>
 
 	</div>
-
+	
 	<div id="dialog" class="window">
 	
 <form action="sample_posteddata.php" method="post">
-		 <p>
+			<div id="coverletterselector" class="coverletterselectorclass"><span>Default Cover Letter</span><div id="coverletterselectorbutton" class="sidebarcombobutton"><img style="padding-top: 6px;" src="include/asc.gif"></div></div>
 				<!--textarea id="editor1" name="editor1" cols="80" rows="10"></textarea-->
 			  <!--textarea class="ckeditor" cols="80" id="editor1" name="editor1" rows="10"></textarea-->
 			<form method="post" action="somepage">
-<textarea id="content" name="content" class="tinymce" style="width:100%">
+<textarea id="content" name="content" class="tinymce" style="width:100%; height:350px;">
 </textarea>
  
 <!-- Some integration calls -->
-<a href="javascript:;" onmousedown="$('#content').tinymce().show();">[Show]</a>
-<a href="javascript:;" onmousedown="$('#content').tinymce().hide();">[Hide]</a>
-<a href="javascript:;" onmousedown="$('#content').tinymce().execCommand('Bold');">[Bold]</a>
-<a href="javascript:;" onmousedown="alert($('#content').html());">[Get contents]</a>
-<a href="javascript:;" onmousedown="alert($('#content').tinymce().selection.getContent());">[Get selected HTML]</a>
-<a href="javascript:;" onmousedown="alert($('#content').tinymce().selection.getContent({format : 'text'}));">[Get selected text]</a>
-<a href="javascript:;" onmousedown="alert($('#content').tinymce().selection.getNode().nodeName);">[Get selected element]</a>
-<a href="javascript:;" onmousedown="$('#content').tinymce().execCommand('mceInsertContent',false,'<b>Hello world!!</b>');">[Insert HTML]</a>
-<a href="javascript:;" onmousedown="$('#content').tinymce().execCommand('mceReplaceContent',false,'<b>{$selection}</b>');">[Replace selection]</a>
-</form>
-
-                  </p>
-                  <p>
-                          <input type="submit" value="Submit" />
-                  </p>
-          </form>
- <a href="#" class="close">Close it</a>
-        </div>
+<!--div id="closebutton3" class="button popupwindowbuttons close" onmousedown="$('#content').tinymce().show();"><center>Show</center></div-->
+<!--div id="closebutton4" class="button popupwindowbuttons close" onmousedown="$('#content').tinymce().hide();"><center>Hide</center></div--> 
+<div id="closebutton5" class="button popupwindowbuttons close" onmousedown="$('#content').tinymce().execCommand('Bold');"><center>Bold</center></div> 
+<div id="closebutton6" class="button popupwindowbuttons close" onmousedown="alert($('#content').html());"><center>Get contents</center></div> 
+<div id="closebutton7" class="button popupwindowbuttons close" onmousedown="alert($('#content').tinymce().selection.getContent());"><center>Get selected HTML</center></div> 
+<div id="closebutton8" class="button popupwindowbuttons close" onmousedown="alert($('#content').tinymce().selection.getContent({format : 'text'}));"><center>Get selected text</center></div> 
+<div id="closebutton9" class="button popupwindowbuttons close" onmousedown="alert($('#content').tinymce().selection.getNode().nodeName);"><center>Get selected element</center></div> 
+<div id="closebutton10" class="button popupwindowbuttons close" onmousedown="$('#content').tinymce().execCommand('mceInsertContent',false,'<b>Hello world!!</b>');"><center>Insert HTML</center></div> 
+<div id="closebutton11" class="button popupwindowbuttons close" onmousedown="$('#content').tinymce().execCommand('mceReplaceContent',false,'<b>{$selection}</b>');"><center>Replace selection</center></div> 
+               
+ <!--a href="#" class="close">Close it</a-->
+<div id="closebutton2" class="closebutton2 button popupwindowbuttons close"><center>Save</center></div> 
+<div id="closebutton12" class="button popupwindowbuttons close"><center>Close</center></div> 
+<div style="margin-top:4px; float:left; margin-left:2px;"><input style="float: left; margin-top:4px;" type="checkbox" id="savedefault" value=""><span style="color: #FDD017;">&nbsp;&nbsp;Save Default</span></input></div>
+</form>	
+</div>
         <!-- Do not remove div#mask, because you'll need it to fill the whole screen -->
         <!--div id="mask"></div-->
     </div>
-<div style="width:1300px; margin-left: 20px;">
+<div class="bodywrapper">
 
 <div id="sidebar">
 <center>
@@ -222,17 +435,41 @@ print "<body>\n";
 <div id="recontact" class="button sidebarbuttons"><center>Recontact All</center></div>
 <div id="uncheckall" class="button sidebarbuttons"><center>Uncheck All</center></div>
 <div id="selectionsummary" class="button sidebarbuttons"><center>Selection Summary</center></div>
-</center>
-		<textarea class="default" style="height: 200px; width: 100%;" id="statusm">Ready.</textarea>
-<select name="sortby" size="1" onchange="alert('todo');" style="width: 100%;">
+<div id="favorites" class="button sidebarbuttons"><center>Favorites</center></div>
+		<!--textarea class="sidebarstatuswindow" id="statusm">Ready.</textarea-->
+		<div id="statusm" class="sidebarstatuswindow">
+		<ul id="statusmlist">
+		<li><i>Ready to run, new messages start here.</i></li>
+		<li>--------------------------------------</li>
+		</ul>
+		<a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Job Application Assistant</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.github.com/paigeadele" property="cc:attributionName" rel="cc:attributionURL">Paige Adele Thompson</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.<br />Based on a work at <a xmlns:dct="http://purl.org/dc/terms/" href="http://www.github.com/paigeadele" rel="dct:source">www.github.com</a>.<br />Permissions beyond the scope of this license may be available at <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.github.com/paigeadele" rel="cc:morePermissions">http://www.github.com/paigeadele</a>.
+		</div>		
+<!--select name="sortby" size="1" onchange="alert('todo');" class="sidebarnavcombo">
 <option value="" name="sortby2" selected><b>Sort Posts By</b></option>
 <option value="selected">Selected</option>
-<option value="postdate">Post Date</option>
+<option value="postdate">Date Posted</option>
 <option value="sourcefeed">Source Feed</option>
 <option value="body">Body</option>
-<option value="modified">Modified Date</option>
-</select>
-	
+<option value="modified">Modified Date</option<>
+<option value="favorites">Favorites</option>
+<option value="erroredposts">Posts with Errors</option>
+<option value="sent">Contacted Posts</option>
+
+</select-->
+<div id="sortby" class="sidebarsortby"><span>Sort By</span><div id="sidebarsortbycombobutton" class="sidebarcombobutton"><img style="padding-top: 6px;" src="include/asc.gif"></div></div>
+	</center>
+	<div id="dialog3" class="combowindow">
+	<ul>
+	<li id="sortselected">Selected</li>
+	<li id="sortdateposted">Date Posted</li>
+	<li id="sortsourcefeed">Source Feed</li>
+	<li>Body</li>
+	<li>Modified Date</li>
+	<li>Favorites</li>
+	<li>Posts with Errors</li>
+	<li>Contacted Posts</li>
+	</ul>
+	</div>
 	</div>
 
 <SCRIPT language="JavaScript">
@@ -249,6 +486,7 @@ function scrollModalDivs() {
 	scrollDiv("#dialog", 20, 15);
 	scrollDiv("#dialog1", 20, 15);
 	scrollDiv("#dialog2", 20, 15);
+//	scrollDiv("#dialog3", 20, 15);
 }
 function scrollDiv(what, margintop, topPadding) {
 	var offset = $(what).offset();
@@ -266,93 +504,9 @@ function scrollDiv(what, margintop, topPadding) {
 	});
 }
 </script>
- <div style="width:1100px;">
+<div class="poststable">
 
 <?
-function setupAttachments($attachment_files, $mysql, $ajax = FALSE) {
-	$attachment_dir = dirname(__FILE__) . '/config/attachments/';
-	$success = file_exists(dirname(__FILE__) . '/config/email.txt');
-	if($ajax)
-		$setupAttachmentsret = array();
-	if(!$success)
-		if($ajax) 
-			array_push($setupAttachmentsret, "<strong>ERROR:</strong> email file: config/email.txt does not exist<br/>\n");
-		else
-			die("<strong>ERROR:</strong> email file: config/email.txt does not exist<br/>\n");
-
-	if ($handle=opendir($attachment_dir)) {
-		while (false !== ($file = readdir($handle))) {
-			if ($file == '.' | $file == '..') {
-				continue;
-			}
-			array_push($attachment_files, $attachment_dir . $file);
-		}
-		if (count($attachment_files) < 1) {
-			if($ajax)
-				array_push($setupAttachmentsret, "<strong>WARNING:</strong> attachment directory: $attachment_dir is empty<br/>\n");
-			else
-				print "<strong>WARNING:</strong> attachment directory: $attachment_dir is empty<br/>\n";
-		}
-	} else {
-		if($ajax)
-			array_push($setupAttachmentsret, "<strong>WARNING:</strong> cannot open attachment directory: $attachment_dir<br/>\n");
-		else
-			print "<strong>WARNING:</strong> cannot open attachment directory: $attachment_dir<br/>\n";
-	}
-	array_push($attachment_files, $setupAttachmentsret);
-	return($attachment_files);
-}
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	ProcessPost($mysql, $config, $attachment_files);
-}	
-function ProcessPost($mysql, $config, $attachment_files, $ajax = FALSE) {
-	if($ajax) 
-		$ret = array();
-	foreach ($_POST['selected'] as $selected) {
-		try {
-			$mailer = new Mailer($selected, $config, $attachment_files, $ajax);
-			if ($config['debug'] == true) {
-				if($ajax)
-					array_push($ret, "DEBUG MODE:  will not email out: disabled.  address to send to is: " . $mailer->getEmailAddress() . "<br/>\n");
-				else
-					print "DEBUG MODE:  will not email out: disabled.  address to send to is: " . $mailer->getEmailAddress() . "<br/>\n";
-				continue;
-			}
-			if ( $mailer->send() !== true ) {
-				if($ajax)
-					array_push($ret,  "<strong>ERROR:</strong> email not sent.<br/>\n");
-				else
-					print "<strong>ERROR:</strong> email not sent.<br/>\n";
-				$sql = "INSERT INTO logs (url, status) VALUES ('$selected', 'error')";
-			} else {
-					if($ajax)
-						array_push($ret,  "Successfully emailed " . $mailer->getEmailAddress() . "<br/>\n");
-					else
-						print "Successfully emailed " . $mailer->getEmailAddress() . "<br/>\n";
-					$sql = "INSERT INTO logs (url, status) VALUES ('$selected', 'sent')";
-			}
-			$success = $mysql->query($sql);
-		        if(!$success)
-				if($ajax)
-					array_push($ret, "<strong>ERROR:</strong> " . $mysql->getError() . "<br/>\n");
-				else 
-					print "<strong>ERROR:</strong> " . $mysql->getError() . "<br/>\n";
-		} catch (Exception $e) {
-			if($ajax)
-				array_push($ret,  "Email exception caught in post <a href='$selected'>$selected</a>: " . $e->getMessage() . "<br/>\n");
-			else
-				print "Email exception caught in post <a href='$selected'>$selected</a>: " . $e->getMessage() . "<br/>\n";
-		}
-	}
-	if($ajax) { 
-		return($ret);
-	}
-	if ($config['display_posts_after_email'] == false) {
-		die();
-	}
-	print "<br/>\n";
-}
 
 foreach ($config['feed'] as $url) {
 	$feed->addFeed($url);
@@ -364,8 +518,8 @@ print "<table class='tablesorter' id='myTable'>\n";
 print "<thead>\n";
 print "<tr>\n";
 print "<th width='25'>X</th>\n";
-print "<th width='70'>Date</th>\n";
-print "<th width='100'>Source Feed</th>\n";
+print "<th>Date</th>\n";
+print "<th>Source Feed</th>\n";
 print "<th>Body</th>\n";
 print "<th width='70'>modified</th>\n";
 print "</tr>\n";
@@ -408,9 +562,12 @@ foreach ($feed->getPosts() as $post) {
 	print "<strong><a href='$post[link]'>$post[title]</strong></a><br/><br/>\n";
 	print "$post[body]\n";
 	print "<br /><br />";
-?> <div id="<? echo $post['link'];?>" class="coverletterbutton button tabledescbuttons"><center>Edit Cover Letter</center></div>
+?>
+<br style="clear: both;"/>
+<div id="<? echo $post['link'];?>" class="addfavoritebutton button tabledescbuttons"><center>Add Favorite</center></div>
+<div id="<? echo $post['link'];?>" class="coverletterbutton button tabledescbuttons"><center>Edit Cover Letter</center></div>
 	<div id="<? echo $post['title'];?>" class="customsubjectbutton button tabledescbuttons"><center>Edit Subject Line</center></div>
-	<div id="<? echo $post['link'];?>" class="customrecipientbutton button tabledescbuttons"><center>Edit Recipient Address</center></div>
+	<div id="<? echo $post['link'];?>" class="customrecipientbutton button tabledescbuttons"><center>Edit RCPT Address</center></div>
 	<div id="<? echo $post['link'];?>" class="sendemailbutton button tabledescbuttons"><center>Send E-mail</center></div>
 
 <br /><br />
@@ -444,28 +601,44 @@ $(document).ready(function() {
 });
 function updateProgress(data, textStatus, xmlHTTPRequest) { 
 	for(var i = 0; i< data.length; i++) { 
-		$("#statusm").append(data[i][0]);
+		$("#statusmlist").prepend("<li><span style='color: green;'>"+data[i][0]+"</span></li>");
+		//$("#statusm").scrollBottom = $("#statusm").scrollHeight;
 	}
 }
 function iteratePostsError(XMLHttpRequest, textStatus, errorThrown) { 
-	alert(textStatus);
-	alert(errorThrown);
+	//alert(textStatus);
+	//alert(errorThrown);
+	$("#statusmlist").prepend("<li><span style='color: red;'>"+textStatus+"</span></li>");
+	$("#statusmlist").prepend("<li><span style='color: red;'>"+errorThrown+"</span></li>");
 }
 function iteratePosts(whatkind) {
 	var sel = $(whatkind);
 	for(var i = 0; i < sel.length; i++) { 
 		$.ajax({ 
-			url: "index.php?ajax=1&selected=" + sel[i].value,  
+			//url: "index.php?ajax=1&selected=" + sel[i].value,  
+			url: "index.php?ajax=1",
 			type: "POST", 
-			context: document.body,
+			//contentType: "application/x-www-form-urlencoded",
+			data: { selected: sel[i].value },
+			//context: document.body, <-- what is this even for :< *angry* *angry* *angry*
 			dataType: "json",
 			success: updateProgress,
 			error: iteratePostsError,
 		});
+/*
+		$.post({
+			url: "index.php?ajax=1",
+			
+			context: document.body,
+			type: "json",
+			callback: updateProgress,
+			error: iteratePostsError,
+	});
+*/
 	}
 	if(whatkind == "input:checked") {
 		//* TODO: there should be code to determine whether or not it was successful or an error. */
-		sel.parent().parent().children().css('background-color', 'CC33CC');
+		sel.parent().parent().children().css('background-color', 'DBC5CD');
 		sel.parent().parent().children().css('color', 'FFF');
 		//sel.parent.parent.children.addClass('
 		sel.attr("checked", false);
@@ -479,7 +652,7 @@ function iteratePosts(whatkind) {
 
 	//select all the a tag with name equal to modal
 	//$('a[name=modal]').click(function(e) {
-function showModalWindow(e, content, which) {
+function showModalWindow(content, which) {
 	// 	ck editor broken.
 	//	$('#editor1').ckeditor( function() { }, { skin : 'office2003' } );
 	//	var editor = $('#editor1').ckeditorGet(); 
@@ -487,10 +660,10 @@ function showModalWindow(e, content, which) {
 	//	editor.insertText(content);
 	//
 	//	tinyMCE.execCommand('mceInsertContent',false,'<br><img alt=$img_title src=$link/img/sadrzaj/$file\>');">Insert Image</a>
-		$('textarea.tinymce').tinymce().execCommand('mceInsertContent',false, content);
+		$('textarea.tinymce').tinymce().execCommand('mceInsertContent',true, content);
 		
 		//Cancel the link behavior
-		e.preventDefault();
+	//	e.preventDefault();
 		//Get the A tag
 		var id = which;
 
@@ -535,36 +708,58 @@ $('#senddata').submit(function() {
 	// I think this can also be accomplished with e.preventDefault()
 	return(iteratePosts("input:checked"));
 });
-
 $('#other').click(function() {
 	$('#senddata').submit();
 });
-
 function fetchCoverLetter(data, textStatus, xmlHTTPRequest)
 {
-	showModalWindow(e, this.id, '#dialog');
+	$('.closebutton2').attr("id", data.jobid);
+	//$('textarea.tinymce').tinymce().execCommand('mceInsertContent', false, data[0].content.toString());
+	showModalWindow(data.content, '#dialog');
 }
+function saveCoverLetterStatus(data, textStatus, xmlHTTPRequest) { 
+	$("#statusmlist").prepend("<li><span style='color: green; background-color: black;'>" + data[0].save_success + "</span></li>");
+}
+$('.closebutton2').click(function(e) {
+	var selectid = this.id;
+	//	var savedefaultselectbox = $('#savedefault');
+	/*if($("#savedefault:checked").val() !== null) { 
+		selectid = "default";
+}*/
+	$.ajax({
+		url: "index.php?ajax=4",
+		data: { 
+			selected: selectid, 
+			content: $('textarea.tinymce').tinymce().getContent() 
+		},	
+		type: "POST", 
+		dataType: "json",
+		success: saveCoverLetterStatus,
+		error: iteratePostsError,
+	});
+	return(false);
+});
 
 $('.coverletterbutton').click(function(e) {
 	$.ajax({ 
-		url: "index.php?ajax=2&selected=" + this.id,  
+		url: "index.php?ajax=2",  
+		data: { selected:  this.id },	
 		type: "POST", 
-		context: document.body,
 		dataType: "json",
 		success: fetchCoverLetter,
 		error: iteratePostsError,
 	});
-	
+	return(false);
 });
 $('.customsubjectbutton').click(function(e) {
-	showModalWindow(e, this.id, '#dialog');
+	showModalWindow(this.id, '#dialog');
 
 });
  $('.customrecipientbutton').click(function(e) {
-	 showModalWindow(e, this.id, '#dialog');
+	 showModalWindow(this.id, '#dialog');
 });
 $('#viewlogbutton').click(function(e) {
-	showModalWindow(e, this.id, '#dialog2');
+	showModalWindow(this.id, '#dialog2');
 });
 $('.sendemailbutton').click(function(e) {
 	alert("todo");//showModalWindow(e, this.id, '#dialog2');
@@ -578,6 +773,12 @@ $('#uncheckall').click(function(e) {
 });
 $('#selectionsummary').click(function(e) {
 	alert("todo");
+});
+$('#sidebarsortbycombobutton').click(function(e) {
+	$('#dialog3').css("visibility", "visible");
+});
+$('#dialog3').click(function(e) {
+		$('#dialog3').css("visibility", "hidden");
 });
 </script>
 

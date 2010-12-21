@@ -5,3 +5,6 @@ config/config.inc.php
 config/config.inc.php~
 config/.config.inc.php.swp
 ./roger/
+./Facebook.DataMining/
+./AjaxianLibrary/
+./phpmyadmin/

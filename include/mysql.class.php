@@ -21,12 +21,20 @@ class Mysql
  
 		if ( $database != NULL ) { 
 			$this->selectDatabase($database);
-		        if(!$this->query("CREATE TABLE IF NOT EXISTS logs (".
+		        /*if(!$this->query("CREATE TABLE IF NOT EXISTS logs (".
 		         "`id` INT( 7 ) NOT NULL AUTO_INCREMENT PRIMARY KEY,".
 			 "`url` VARCHAR( 255 ) NOT NULL,".
 		 	 "`status` TEXT)")) {
 				 die("could not create table: " .mysql_error());
-			 }
+			 }*/
+			if(!$this->query("CREATE TABLE IF NOT EXISTS `logs` (
+  			`id` int(7) NOT NULL auto_increment,
+  			`url` varchar(255) NOT NULL,
+		      	`status` text,
+			`modified` timestamp NOT NULL default CURRENT_TIMESTAMP,
+			PRIMARY KEY  (`id`))")) {
+				die("could not create table: " .mysql_error());
+			}
 			if(!$this->query("
 				 CREATE TABLE IF NOT EXISTS `subjects` (
 					 `id` INT NOT NULL AUTO_INCREMENT ,
