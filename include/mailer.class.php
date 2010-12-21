@@ -8,6 +8,7 @@ class Mailer
 	private $email_addr;
 	private $subject;
 	private $body;
+	private $bodyTail;
 	private $attachment_files;
 	private $ajax;
 	public $messages;
@@ -46,9 +47,11 @@ class Mailer
 		
 		if (preg_match_all ($pattern, $contents, $matches)) {
 			$this->email_addr = $matches[1][0];
-			
-			$handle = fopen(dirname(__FILE__) . '/../config/email.txt', 'r');
-			$this->body = stream_get_contents($handle) . "\n$post_url\n";
+			//TODO
+			//$handle = fopen(dirname(__FILE__) . '/../config/email.txt', 'r');
+			//$this->bodyTail = stream_get_contents($handle) . "\n$post_url\n";
+			$this->bodyTail = "\n$post_url\n";
+			//$this->AppendToBody(stream_get_contents($handle) . "\n$post_url\n");
 			fclose($handle);
 		} else {
 			throw new Exception ("no email address found");
@@ -63,7 +66,9 @@ class Mailer
 		
 		$this->subject = substr ($contents, $pos1+4, $pos2-$pos1-4);
 	}
-	
+	public function AppendToBody($content) { 
+		$this->body .= "\n" . $content . "\n";
+	}	
 	public function send()
 	{
 		session_start();
@@ -76,7 +81,7 @@ class Mailer
 		$this->xpm_obj->From($this->config["email"][$ptr]['from_addr'], $this->config["email"][$ptr]['from_name']); // set from address
 		$this->xpm_obj->AddTo($this->email_addr); // add to address
 		$this->xpm_obj->Subject($this->subject); // set subject
-		$this->xpm_obj->Text($this->body); // set text message
+		$this->xpm_obj->Html($this->body . $this->bodyTail); // set text message
 		if(isset($this->config['bccaddr'])) { 
 			$this->xpm_obj->AddBcc($this->config['bccaddr']);
 		}	

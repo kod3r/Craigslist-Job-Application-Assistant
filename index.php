@@ -218,11 +218,13 @@ function GetCoverLetterOrDefault($mysql, $selected, $ajax=TRUE) {
 }
 function setupAttachments($attachment_files, $mysql, $ajax = FALSE) {
 	$attachment_dir = dirname(__FILE__) . '/config/attachments/';
-	$success = file_exists(dirname(__FILE__) . '/config/email.txt');
 	if($ajax)
 		$setupAttachmentsret = array();
+	/*$success = file_exists(dirname(__FILE__) . '/config/email.txt');
+	TODO: modify this crap 
 	if(!$success)
 		$setupAttachmentsret = AttatchmentMessage($setupAttachmentsret, "ERROR: email file: config/email.txt does not exist");
+	 */
 
 	if ($handle=opendir($attachment_dir)) {
 		while (false !== ($file = readdir($handle))) {
@@ -296,6 +298,8 @@ function ProcessPost($mysql, $config, $attachment_files, $ajax = FALSE) {
 			$doc .= $myhtmldocfactory->getFotter();
 			$mailer->xpm_obj->Attach($doc, "application/msword", "coverletter.doc", null, null, 'inline', MIME::unique());
 			/**/
+			$custmsgordef = GetCustomMessageOrDefault($mysql, $selected); 
+			$mailer->AppendToBody($custmsgordef["content"]);
 			if ($config['debug'] == true) {			
 
 				$ret = MailerMessage(
@@ -597,9 +601,9 @@ foreach ($feed->getPosts() as $post) {
 	else
 		 print "<td valign='top'>";
 	if(!$please)
-		print "<input type='checkbox' name='selected[]' value='$post[link]'/></td>\n";
+		print "<input type='checkbox' class='postcheck' name='selected[]' value='$post[link]'/></td>\n";
 	else 
-	        print "<input type='checkbox' name='selected[]' value='$post[link]' disabled/></td>\n";
+	        print "<input type='checkbox' class='postcheck' name='selected[]' value='$post[link]' disabled/></td>\n";
 	if(!$please)
 		print "<td valign='top'>";
 	else 
@@ -824,7 +828,7 @@ $('#recontact').click(function(e) {
 });
 /* Deselect all checked jobs */
 $('#uncheckall').click(function(e) {
-	alert("todo");
+	$('.postcheck:checked').attr('checked', false);
 });
 /* Show Selection Summary */
 $('#selectionsummary').click(function(e) {
