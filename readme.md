@@ -1,3 +1,7 @@
+<h1> Check out the latest screenshots </h1> 
+
+<table style="width:194px;"><tr><td align="center" style="height:194px;background:url(http://picasaweb.google.com/s/c/transparent_album_background.gif) no-repeat left"><a href="http://picasaweb.google.com/111553006199761493180/JobApplicationAssistant?feat=embedwebsite"><img src="http://lh5.ggpht.com/_gdoUvmPl5HM/TRJy_GIn3WE/AAAAAAAAACs/wtxQJU-kMfE/s160-c/JobApplicationAssistant.jpg" width="160" height="160" style="margin:1px 0 0 4px;"></a></td></tr><tr><td style="text-align:center;font-family:arial,sans-serif;font-size:11px"><a href="http://picasaweb.google.com/111553006199761493180/JobApplicationAssistant?feat=embedwebsite" style="color:#4D4D4D;font-weight:bold;text-decoration:none;">Job Application Assistant</a></td></tr></table>
+
 <b>Features:</b>
 
 - scrolling sidebar
