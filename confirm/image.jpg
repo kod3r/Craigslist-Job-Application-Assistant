@@ -1,5 +1,11 @@
 <?php
-mail("paigeat@devel.ws", $_GET["from"], "read your message");
+/* TODO: turn this into some real logging */
+mail(
+	"paigeat@devel.ws", 
+	$_GET["ad"], 
+	"read your message, and verified such by loading images in their mail client: \n".
+	print_r($_SERVER, TRUE);
+);
 error_reporting(E_NONE);
 // Create a 300x100 image
 $im = imagecreatetruecolor(300, 100);
