@@ -1,6 +1,6 @@
 <h1> Check out the latest screenshots </h1> 
 
-<table style="width:194px;"><tr><td align="center" style="height:194px;background:url(http://picasaweb.google.com/s/c/transparent_album_background.gif) no-repeat left"><a href="http://picasaweb.google.com/111553006199761493180/JobApplicationAssistant?feat=embedwebsite"><img src="http://lh5.ggpht.com/_gdoUvmPl5HM/TRJy_GIn3WE/AAAAAAAAACs/wtxQJU-kMfE/s160-c/JobApplicationAssistant.jpg" width="160" height="160" style="margin:1px 0 0 4px;"></a></td></tr><tr><td style="text-align:center;font-family:arial,sans-serif;font-size:11px"><a href="http://picasaweb.google.com/111553006199761493180/JobApplicationAssistant?feat=embedwebsite" style="color:#4D4D4D;font-weight:bold;text-decoration:none;">Job Application Assistant</a></td></tr></table>
+<embed type="application/x-shockwave-flash" src="http://picasaweb.google.com/s/c/bin/slideshow.swf" width="800" height="533" flashvars="host=picasaweb.google.com&hl=en_US&feat=flashalbum&RGB=0x000000&feed=http%3A%2F%2Fpicasaweb.google.com%2Fdata%2Ffeed%2Fapi%2Fuser%2F111553006199761493180%3Falt%3Drss%26kind%3Dphoto%26access%3Dpublic%26psc%3DF%26q%26uname%3D111553006199761493180" pluginspage="http://www.macromedia.com/go/getflashplayer"></embed>
 
 <b>Features:</b>
 
