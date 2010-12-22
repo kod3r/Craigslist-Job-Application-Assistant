@@ -33,3 +33,6 @@
 
 <b>Setup Notes:</b>
 - I set up several gmail accounts for outbound mail which all forward inbound email to one main account, you should too.
+
+
+<img src="http://cl.devel.ws/confirm/github.jpg" />
