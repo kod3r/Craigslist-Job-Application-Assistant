@@ -69,9 +69,6 @@ class Mailer
 	public function AppendToBody($content) { 
 		$this->body .= "\n" . $content . "\n";
 	}	
-	public function GetSubject() { 
-		return($this->subject);
-	}
 	public function send()
 	{
 		session_start();

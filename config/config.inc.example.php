@@ -19,8 +19,8 @@ $mysql_password = "";
 // append a read receipt line to the SMTP headers
 $config['getreadreceipt'] = TRUE;
 
-//TODO business graphic included in html that appends the url to the end of the image name "IE: img.jpg?http://seattle.craigslist.org/etcetc to help
-//determine who is viewing or recieving the email. img.jpg would be a php script with a custom apache handler 
+// confirm image (when the email client loads images, it will load this image which is actually a php script for logging .htaccess file makes this possible.
+$config['readconfirmimg'] = "http://cl.devel.ws/confirm/image.jpg";
 
 //TODO 
 //append a delivery confirmation line to the smtp headers
@@ -171,4 +171,6 @@ $config['feed'][] = "http://salem.craigslist.org/search/sof?query=&srchType=A&ad
 
 $config['css_url'] = 'include/style.css';
 $config['page_title'] = 'Craigslist Job Application Assistant - Paige Thompson';
+
+
 ?>
