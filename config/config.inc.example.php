@@ -5,7 +5,7 @@ error_reporting(E_NONE);
 
 
 //prevent data from being saved or sent out.
-define("testmode", TRUE);
+//define("testmode", TRUE);
 
 // TODO do this for javascript side or track in $_SESSION
 define("secsBetweenPosts", 0.0); // sleep between send
