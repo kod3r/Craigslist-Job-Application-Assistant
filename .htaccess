@@ -1,0 +1,6 @@
+
+AuthUserFile /home/erratic/domains/cl.devel.ws/etc/.htpasswd
+AuthName "Unauthorized Access Prohibited" 
+AuthType Basic
+require valid-user
+Satisfy Any

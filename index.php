@@ -280,13 +280,30 @@ function MailerMessage($msgstack, $message, $ajax, $selected, $type, $mysql=NULL
 	}
 	return($msgstack);
 }
+function ProcessKeywords($text, $keyword, $value) { 
+	str_replace(
+		"{{{".$keyword."}}}",
+		$value,
+		$text);
+	return($text);
+}
 function ProcessPost($mysql, $config, $attachment_files, $ajax = FALSE) {
 	if($ajax) 
 		$ret = array();
 	foreach ($_POST['selected'] as $selected) {
 		try {
 			$mailer = new Mailer($selected, $config, $attachment_files, $ajax);
-			$coverLetter = GetCoverLetterOrDefault($mysql, $selected);		
+			$coverLetter = GetCoverLetterOrDefault($mysql, $selected);			
+			ProcessKeywords(
+				&$coverLetter["content"],
+				"posttitle",
+				$mailer->GetSubject()
+			);
+			ProcessKeywords(
+				&$coverLetter["content"],
+				"posturl",
+				$selected
+			);
 			/* convert this HTML Doc to a word doc :D
 			 * http://www.phpclasses.org/browse/file/14707.html 
 			 */
@@ -299,6 +316,11 @@ function ProcessPost($mysql, $config, $attachment_files, $ajax = FALSE) {
 			$mailer->xpm_obj->Attach($doc, "application/msword", "coverletter.doc", null, null, 'inline', MIME::unique());
 			/**/
 			$custmsgordef = GetCustomMessageOrDefault($mysql, $selected); 
+			ProcessKeywords(
+				&$custmsgordef["content"], 
+				"readconfirmimg", 
+				$config['readconfirmimg'] . "?ad=" . $selected
+			);
 			$mailer->AppendToBody($custmsgordef["content"]);
 			if ($config['debug'] == true) {			
 
@@ -634,9 +656,9 @@ foreach ($feed->getPosts() as $post) {
 	print "<td>". $row['modified']."</td>";
 	print "</tr>\n";
 }
-print "<tr>\n";
-print "<td colspan='4'><input type='submit' style='visibility: hidden;' value='Spam'</td>\n";
-print "</tr>\n";
+//print "<tr>\n";
+//print "<td colspan='4'><input type='submit' style='visibility: hidden;' value='Spam'</td>\n";
+//print "</tr>\n";
 print "</tbody>\n";
 print "</table>\n";
 print "</form>\n";
