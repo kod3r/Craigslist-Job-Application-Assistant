@@ -1,12 +1,11 @@
 <?php
 /* TODO: turn this into some real logging */
+error_reporting(E_NONE);
 mail(
 	"paigeat@devel.ws", 
 	$_GET["ad"], 
 	"read your message, and verified such by loading images in their mail client: \n".
-	print_r($_SERVER, TRUE);
-);
-error_reporting(E_NONE);
+	print_r($_SERVER, TRUE));
 // Create a 300x100 image
 $im = imagecreatetruecolor(300, 100);
 $red = imagecolorallocate($im, 0xFF, 0xFF, 0xFF);
